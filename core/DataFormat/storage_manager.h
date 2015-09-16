@@ -14,51 +14,14 @@
 #ifndef LARLITE_STORAGE_MANAGER_H
 #define LARLITE_STORAGE_MANAGER_H
 
+#include <vector>
 #include <TFile.h>
 #include <TChain.h>
 #include <TError.h>
 #include "Base/larlite_base.h"
 #include "data_base.h"
+#include "data_type.h"
 #include "event_ass.h"
-namespace larlite {
-  class trigger;
-  class potsummary;
-  class event_hit;
-  class hit;
-  class event_track;
-  class event_trackmom;
-  class event_mctruth;
-  class event_gtruth;
-  class event_mcpart;
-  class event_mctree;
-  class event_user;
-  class event_spacepoint;
-  class event_rawdigit;
-  class event_wire;
-  class event_hit;
-  class event_cluster;
-  class event_shower;
-  class event_mcshower;
-  class event_mctrack;
-  class event_simch;
-  class event_calorimetry;
-  class event_vertex;
-  class event_endpoint2d;
-  class event_seed;
-  class event_cosmictag;
-  class event_opflash;
-  class event_ophit;
-  class event_mcflux;
-  class event_pfpart;
-  class event_partid;
-  class event_gtruth;
-  class event_minos;
-  class event_ass;
-  class event_pcaxis;
-  class event_flashmatch;
-  class event_fifo;
-  class event_opdetwaveform;
-}
 
 namespace larlite {
   /**
@@ -199,7 +162,7 @@ namespace larlite {
     template <class T>
     T* get_data(const std::string& name)
     {
-      auto type = data_type<T>();
+      auto type = larlite::data_type<T>();
       return (T*)(get_data(type,name));
     }
 
@@ -211,7 +174,7 @@ namespace larlite {
     template <class T>
     T* get_rundata(const std::string& name)
     {
-      auto type = rundata_type<T>();
+      auto type = larlite::rundata_type<T>();
       return (T*)(get_rundata(type,name));
     }
 
@@ -223,7 +186,7 @@ namespace larlite {
     template <class T>
     T* get_subrundata(const std::string& name)
     {
-      auto type = subrundata_type<T>();
+      auto type = larlite::subrundata_type<T>();
       return (T*)(get_subrundata(type,name));
     }
     /*
@@ -326,7 +289,7 @@ namespace larlite {
     {
       if(b) throw DataFormatException("Valid pointer provided (should be nullptr)!");
 
-      auto type_b = this->data_type<U>();
+      auto type_b = larlite::data_type<U>();
       AssInfo_t ass_info;
       if(ass_producer.empty())
 	ass_info = this->find_one_assid(a,type_b);
@@ -346,7 +309,7 @@ namespace larlite {
     {
       if(b) throw DataFormatException("Valid pointer provided (should be nullptr)!");
 
-      auto type_b = this->data_type<U>();
+      auto type_b = larlite::data_type<U>();
       AssInfo_t ass_info;
       if(ass_producer.empty())
 	ass_info = this->find_unique_assid(a,type_b);
@@ -381,18 +344,6 @@ namespace larlite {
     
     /// Getter for a counter of written-out events
     inline UInt_t get_entries_written() const {return _nevents_written;}
-
-    /// Run data product class => enum type converter
-    template <class T>
-    data::RunDataType_t rundata_type() const;
-
-    /// SubRun data product class => enum type converter
-    template <class T>
-    data::SubRunDataType_t subrundata_type() const;
-
-    /// Event data product class => enum type converter
-    template <class T>
-    data::DataType_t data_type() const;
 
     /// Utility method: given a type, returns a data product name
     const std::string& product_name(data::DataType_t const type) const
@@ -493,44 +444,9 @@ namespace larlite {
 
 }
 
-
 #ifndef __CINT__
 //#include "storage_manager.template.hh"
 namespace larlite {
-  template<> data::DataType_t storage_manager::data_type<trigger> () const;
-  template<> data::DataType_t storage_manager::data_type<event_gtruth> () const;
-  template<> data::DataType_t storage_manager::data_type<event_mctruth> () const;
-  template<> data::DataType_t storage_manager::data_type<event_mcpart> () const;
-  template<> data::DataType_t storage_manager::data_type<event_mcflux> () const;
-  template<> data::DataType_t storage_manager::data_type<event_simch> () const;
-  template<> data::DataType_t storage_manager::data_type<event_mcshower> () const;
-  template<> data::DataType_t storage_manager::data_type<event_rawdigit> () const;
-  template<> data::DataType_t storage_manager::data_type<event_wire> () const;
-  template<> data::DataType_t storage_manager::data_type<event_hit> () const;
-  template<> data::DataType_t storage_manager::data_type<event_ophit> () const;
-  template<> data::DataType_t storage_manager::data_type<event_opflash> () const;
-  template<> data::DataType_t storage_manager::data_type<event_cluster> () const;
-  template<> data::DataType_t storage_manager::data_type<event_seed> () const;
-  template<> data::DataType_t storage_manager::data_type<event_spacepoint> () const;
-  template<> data::DataType_t storage_manager::data_type<event_track> () const;
-  template<> data::DataType_t storage_manager::data_type<event_trackmom> () const;
-  template<> data::DataType_t storage_manager::data_type<event_shower> () const;
-  template<> data::DataType_t storage_manager::data_type<event_vertex> () const;
-  template<> data::DataType_t storage_manager::data_type<event_endpoint2d> () const;
-  template<> data::DataType_t storage_manager::data_type<event_calorimetry> () const;
-  template<> data::DataType_t storage_manager::data_type<event_partid> () const;
-  template<> data::DataType_t storage_manager::data_type<event_pfpart> () const;
-  template<> data::DataType_t storage_manager::data_type<event_user> () const;
-  template<> data::DataType_t storage_manager::data_type<event_mctrack> () const;
-  template<> data::DataType_t storage_manager::data_type<event_mctree> () const;
-  template<> data::DataType_t storage_manager::data_type<event_minos> () const;
-  template<> data::DataType_t storage_manager::data_type<event_cosmictag>() const;
-  template<> data::DataType_t storage_manager::data_type<event_fifo>() const;
-  template<> data::DataType_t storage_manager::data_type<event_ass>() const;
-  template<> data::DataType_t storage_manager::data_type<event_pcaxis>() const;
-  template<> data::DataType_t storage_manager::data_type<event_flashmatch>() const;
-  template<> data::DataType_t storage_manager::data_type<event_opdetwaveform> () const;
-  template<> data::SubRunDataType_t storage_manager::subrundata_type<potsummary>() const;
 
   template<>
   const storage_manager::AssInfo_t
