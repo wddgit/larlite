@@ -66,6 +66,10 @@
 #pragma link C++ class std::vector<larlite::hit>+;
 #pragma link C++ class larlite::event_hit+;
 
+#pragma link C++ class larlite::hit1+;
+#pragma link C++ class std::vector<larlite::hit1>+;
+#pragma link C++ class larlite::wrapper<std::vector<larlite::hit1> >+;
+
 #pragma link C++ class larlite::ophit+;
 #pragma link C++ class std::vector<larlite::ophit>+;
 #pragma link C++ class larlite::event_ophit+;
