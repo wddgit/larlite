@@ -17,6 +17,7 @@
 
 #include "Base/DataFormatConstants.h"
 #include "larlite_dataformat_utils.h"
+#include "product_id.h"
 #include <TString.h>
 #include "DataFormatException.h"
 namespace larlite{

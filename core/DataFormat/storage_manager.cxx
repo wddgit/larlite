@@ -45,12 +45,15 @@ namespace larlite {
   storage_manager::storage_manager(storage_manager::IOMode_t mode)
     : larlite_base()
     , _ptr_data_array (data::kDATA_TYPE_MAX,std::map<std::string,larlite::event_base*>())
+    , _ptr_datawrapper_array (data::kDATA_TYPE_MAX1,std::map<std::string,larlite::ed_product*>())
     , _ptr_rundata_array (data::kRUNDATA_TYPE_MAX,std::map<std::string,larlite::run_base*>())
     , _ptr_subrundata_array (data::kSUBRUNDATA_TYPE_MAX,std::map<std::string,larlite::subrun_base*>())
     , _in_id_ch  (nullptr)
     , _out_id_ch (nullptr)
     , _in_ch  (data::kDATA_TYPE_MAX,std::map<std::string,TChain*>())
     , _out_ch (data::kDATA_TYPE_MAX,std::map<std::string,TTree*>() )
+    , _in1_ch  (data::kDATA_TYPE_MAX1,std::map<std::string,TChain*>())
+    , _out1_ch (data::kDATA_TYPE_MAX1,std::map<std::string,TTree*>() )
     , _in_rundata_ch  (data::kRUNDATA_TYPE_MAX,std::map<std::string,TChain*>())
     , _out_rundata_ch (data::kRUNDATA_TYPE_MAX,std::map<std::string,TTree*>() )
     , _in_subrundata_ch  (data::kSUBRUNDATA_TYPE_MAX,std::map<std::string,TChain*>())
@@ -375,6 +378,117 @@ namespace larlite {
     return result_ptr;    
   }
 
+  event_base* storage_manager::get_datawrapper(const data::DataType1_t type, const std::string& name)
+  {
+    // Make sure io is ready
+    if(!is_ready_io()){
+      Message::send(msg::kERROR,__FUNCTION__,
+		    Form("IO is not ready (file not opened and/or TTree has not read-in yet!"));
+      throw DataFormatException("Cannot retrieve data yet.");
+    }
+    
+    // Read entry _index-1
+    if(!_index && _mode != kWRITE) {
+      Message::send(msg::kERROR,__FUNCTION__,
+		    Form("Call next_event() before calling %s", __FUNCTION__));
+      throw DataFormatException("Cannot retrieve data yet.");
+    }
+    
+    ed_product* result_ptr = nullptr;
+    auto inch_ptr_iter = _in1_ch[type].find(name);
+    auto data_ptr_iter = _ptr_datawrapper_array[type].find(name);
+    if(data_ptr_iter != _ptr_datawrapper_array[type].end())
+      result_ptr = (ed_product*)((*data_ptr_iter).second);
+
+    // If in kREAD mode, here is where we read in data product
+    if( inch_ptr_iter != _in1_ch[type].end() &&
+	_mode == kREAD &&
+	!( _event_id == (*data_ptr_iter).second->event_id() &&
+	   _run_id    == (*data_ptr_iter).second->run()      &&
+	   _subrun_id == (*data_ptr_iter).second->subrun()      ) ) {
+      
+      (*inch_ptr_iter).second->GetEntry(_index-1);
+
+      if( _check_alignment ) {
+	
+	if(_event_id==data::kINVALID_UINT) 
+
+	  _event_id = (*data_ptr_iter).second->event_id();
+
+	else if( (*data_ptr_iter).second->event_id() != _event_id) {
+	  
+	  print(msg::kERROR,__FUNCTION__,
+		Form("Detected event-alignment mismatch for data type %s by %s! %d (ref) != %d (%s by %s)",
+		     data::kDATA1_TREE_NAME[type].c_str(), name.c_str(),
+		     _event_id,
+		     (*data_ptr_iter).second->event_id(),
+		     data::kDATA1_TREE_NAME[type].c_str(),
+		     (*data_ptr_iter).first.c_str())
+		);
+	  throw DataFormatException("Aborting event processing...");
+	  return 0;
+	}
+      }
+    }
+
+    // If data class object does not exist, and if it's either kWRITE or kBOTH mode, create it.
+    if( (data_ptr_iter == _ptr_datawrapper_array[type].end() || !((*data_ptr_iter).second)) && 
+       _mode != kREAD) {
+
+      create_datawrapper_ptr(type,name);
+
+      data_ptr_iter = _ptr_datawrapper_array[type].find(name);
+
+      if(data_ptr_iter!=_ptr_datawrapper_array[type].end() && (*data_ptr_iter).second) {
+
+	result_ptr = (*data_ptr_iter).second;
+	result_ptr->set_run(_run_id);
+	result_ptr->set_subrun(_subrun_id);
+	result_ptr->set_event_id(_event_id);
+
+	if(!_name_out_tdirectory.empty())
+	  _fout->cd(_name_out_tdirectory.c_str());
+
+	auto out_ch_iter = _out1_ch[type].find(name);
+	if(out_ch_iter == _out1_ch[type].end()) {
+	  _out1_ch[type][name]=nullptr;
+	  out_ch_iter = _out1_ch[type].find(name);
+	}
+
+	if(!(*out_ch_iter).second) {
+
+	  _fout->cd(_name_out_tdirectory.c_str());
+
+	  (*out_ch_iter).second=new TTree(Form("%s_%s_tree",
+					       data::kDATA1_TREE_NAME[(data::DataType1_t)type].c_str(),
+					       name.c_str()),
+					  Form("%s Tree by %s",
+					       data::kDATA1_TREE_NAME[(data::DataType1_t)type].c_str(),
+					       name.c_str())
+					  );
+	  
+	  //(*out_ch_iter).second->SetMaxTreeSize    (1024*1024*1024);
+	  //(*out_ch_iter).second->SetMaxVirtualSize (1024*1024*1024);
+	  
+	  (*out_ch_iter).second->Branch(Form("%s_%s_branch",
+					     data::kDATA1_TREE_NAME[(data::DataType1_t)type].c_str(),
+					     name.c_str()),
+					//result_ptr->GetName(),
+					&(_ptr_datawrapper_array[type][name]));
+	  
+	  Message::send(msg::kWARNING,__FUNCTION__,
+			Form("Requested %s tree by %s which does not exists yet. Created a new one.", 
+			     data::kDATA1_TREE_NAME[type].c_str(),
+			     //result_ptr->GetName(),
+			     name.c_str())
+			);
+	}
+      }
+    }
+    
+    return result_ptr;    
+  }
+
   void storage_manager::reset()
   {
     if(_verbosity[msg::kDEBUG])
@@ -414,6 +528,10 @@ namespace larlite {
       _ptr_data_array[i].clear();
       _write_data_array[i].clear();      
       _read_data_array[i].clear();      
+    }
+    for(int i=0; i<data::kDATA_TYPE_MAX1; ++i) {
+      _in1_ch[i].clear();
+      _out1_ch[i].clear();
     }
     for(int i=0; i<data::kRUNDATA_TYPE_MAX; ++i) {
       _in_rundata_ch[i].clear();
@@ -597,6 +715,15 @@ namespace larlite {
 		  matched=true;
 		}
 	      }
+	      for(int i=0; i<data::kDATA_TYPE_MAX1 && !matched; ++i) {
+		if(data::kDATA1_TREE_NAME[i] == type_name && 
+		   _in_ch[(data::DataType1_t)i].find(producer_name) == _in_ch[(data::DataType1_t)i].end()) {
+		  _in_ch[(data::DataType1_t)i].insert(std::make_pair(producer_name.c_str(),(TChain*)nullptr));
+		  print(msg::kINFO,__FUNCTION__,Form("Found %s tree made by %s...",type_name.c_str(),producer_name.c_str()));
+		  //_input_product_id.push_back(product_id((data::DataType_t)i,producer_name.c_str()));
+		  matched=true;
+		}
+	      }
 	      for(int i=0; i<data::kRUNDATA_TYPE_MAX && !matched; ++i) {
 		if(data::kRUNDATA_TREE_NAME[i] == type_name && 
 		   _in_rundata_ch[(data::RunDataType_t)i].find(producer_name) == _in_rundata_ch[(data::RunDataType_t)i].end()) {
@@ -660,6 +787,8 @@ namespace larlite {
     
     std::vector<std::map<std::string, size_t> > nevents_array(data::kDATA_TYPE_MAX,
 							      std::map<std::string,size_t>());
+    std::vector<std::map<std::string, size_t> > nevents1_array(data::kDATA_TYPE_MAX1,
+							      std::map<std::string,size_t>());
     std::vector<std::map<std::string, size_t> > nruns_array(data::kRUNDATA_TYPE_MAX,
 							    std::map<std::string,size_t>());
     std::vector<std::map<std::string, size_t> > nsubruns_array(data::kSUBRUNDATA_TYPE_MAX,
@@ -670,6 +799,12 @@ namespace larlite {
       for(auto const& name_ptr : _in_ch[i])
 
 	nevents_array[i].insert(std::make_pair(name_ptr.first,0));
+    }
+    for(size_t i=0; i<nevents1_array.size(); ++i) {
+
+      for(auto const& name_ptr : _in1_ch[i])
+
+	nevents1_array[i].insert(std::make_pair(name_ptr.first,0));
     }
     for(size_t i=0; i<nruns_array.size(); ++i) {
 
@@ -762,6 +897,55 @@ namespace larlite {
 						   name_ptr.first.c_str()
 						   ),
 					      &(_ptr_data_array[i][name_ptr.first])
+					      );
+	    
+	    if(!_nevents) _nevents = nevents_array[i][name_ptr.first];
+	    
+	  }else{
+	    print(msg::kWARNING,__FUNCTION__,
+		  Form("TTree %s contains no event... removing read pointer...",tree_name.c_str()));
+	    delete name_ptr.second;
+	    name_ptr.second=nullptr;
+	  }
+	}
+      }
+      for(size_t i=0; i<data::kDATA_TYPE_MAX1; ++i){
+      
+	for(auto& name_ptr : _in1_ch[i]) {
+	  
+	  std::string tree_name(Form("%s_%s_tree",
+				     data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
+				     name_ptr.first.c_str())
+				);
+	  if(!_name_in_tdirectory.empty())
+	    tree_name = Form("%s/%s",_name_in_tdirectory.c_str(),tree_name.c_str());
+	  
+	  name_ptr.second=new TChain(tree_name.c_str(),
+				     Form("%s Tree by %s",
+					  data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
+					  name_ptr.first.c_str())
+				     );
+	  
+	  for(size_t j=0; j<_in_fnames.size(); ++j)
+	    
+	    name_ptr.second->AddFile(_in_fnames[j].c_str());
+	  
+	  // Ignore ROOT error message due to not finding a TTree 
+	  gErrorIgnoreLevel = kBreak;
+	  nevents1_array[i][name_ptr.first] += name_ptr.second->GetEntries();
+	  gErrorIgnoreLevel = kWarning;
+	  
+	  if(nevents1_array[i][name_ptr.first]) { 
+	    
+	    print(msg::kDEBUG,__FUNCTION__,
+		  Form("Found %zu events found in TTree %s ...",nevents1_array[i][name_ptr.first],tree_name.c_str()));
+	    
+	    create_datawrapper_ptr((data::DataType1_t)i,name_ptr.first);
+	    name_ptr.second->SetBranchAddress(Form("%s_%s_branch",
+						   data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
+						   name_ptr.first.c_str()
+						   ),
+					      &(_ptr_datawrapper_array[i][name_ptr.first])
 					      );
 	    
 	    if(!_nevents) _nevents = nevents_array[i][name_ptr.first];
@@ -923,6 +1107,32 @@ namespace larlite {
 					     &(_ptr_data_array[i][name_ptr.first]));
 	}
       }
+      for(int i=0; i<data::kDATA_TYPE_MAX1; ++i) {
+	
+	for(auto& name_ptr : _in1_ch[i]) {
+	  
+	  if(!_ptr_datawrapper_array[i][name_ptr.first]) continue;
+	  
+	  _fout->cd(_name_out_tdirectory.c_str());
+	  
+	  _out1_ch[i][name_ptr.first]=new TTree(Form("%s_%s_tree",
+						    data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
+						    name_ptr.first.c_str()),
+					       Form("%s Tree by %s",
+						    data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
+						    name_ptr.first.c_str())
+					       );
+	  
+	  //_out_ch[i][name_ptr.first]->SetMaxTreeSize    (1024*1024*1024);
+	  //_out_ch[i][name_ptr.first]->SetMaxVirtualSize (1024*1024*1024);
+	  
+	  _out1_ch[i][name_ptr.first]->Branch(Form("%s_%s_branch",
+						  data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
+						  name_ptr.first.c_str()),
+					     //_ptr_data_array[i][name_ptr.first]->GetName(),
+					     &(_ptr_datawrapper_array[i][name_ptr.first]));
+	}
+      }
 
       for(int i=0; i<data::kRUNDATA_TYPE_MAX; ++i) {
 
@@ -999,6 +1209,26 @@ namespace larlite {
 	  Message::send(msg::kWARNING,__FUNCTION__,
 			Form("Different number of entries found on tree: %s by %s (found %zu while previous found %ud)",
 			     data::kDATA_TREE_NAME[(data::DataType_t)i].c_str(),
+			     name_ctr.first.c_str(),
+			     name_ctr.second,
+			     _nevents)
+			);
+
+	  if( name_ctr.second < min_nevents)
+	  
+	    min_nevents = name_ctr.second;
+	}
+      }
+    }
+    for(int i=0; i<data::kDATA_TYPE_MAX1; ++i) {
+
+      for(auto const& name_ctr : nevents1_array[i]) {
+
+	if(name_ctr.second && _nevents!=name_ctr.second) {
+
+	  Message::send(msg::kWARNING,__FUNCTION__,
+			Form("Different number of entries found on tree: %s by %s (found %zu while previous found %ud)",
+			     data::kDATA1_TREE_NAME[(data::DataType1_t)i].c_str(),
 			     name_ctr.first.c_str(),
 			     name_ctr.second,
 			     _nevents)
@@ -1156,6 +1386,36 @@ namespace larlite {
       break;
     case data::kOpDetWaveform:
       _ptr_data_array[type][name]=new event_opdetwaveform(name);
+      break;
+    default:
+      print(msg::kERROR,__FUNCTION__,Form("Event-data identifier not supported: %d",(int)type));
+      break;
+    }
+
+    return;
+  }
+  
+  void storage_manager::create_datawrapper_ptr(data::DataType1_t const type, std::string const& name){
+
+    if(get_verbosity() <= msg::kINFO)
+
+      Message::send(msg::kINFO,__FUNCTION__,
+		    Form("Requested a new event-data pointer of type %s (=%d) by %s",
+			 data::kDATA1_TREE_NAME[type].c_str(),
+			 type,
+			 name.c_str())
+		    );
+
+    auto name_ptr = _ptr_datawrapper_array[type].find(name);
+    if(name_ptr == _ptr_datawrapper_array[type].end()) {
+      _ptr_datawrapper_array[type][name]=nullptr;
+      name_ptr = _ptr_data_array[type].find(name);
+    }
+    if((*name_ptr).second) return;
+    
+    switch(type){
+    case data::kHit1:
+      _ptr_datawrapper_array[type][name]=new larlite::wrapper<std::vector<larlite::hit1> >(type, name);
       break;
     default:
       print(msg::kERROR,__FUNCTION__,Form("Event-data identifier not supported: %d",(int)type));

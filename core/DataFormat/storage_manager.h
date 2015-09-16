@@ -3,7 +3,7 @@
  *
  * \ingroup DataFormat
  * 
- * \brief Higher elve data handling class def header file.
+ * \brief Higher level data handling class def header file.
  *
  * @author Kazu - Nevis 2013
  */
@@ -20,6 +20,8 @@
 #include "Base/larlite_base.h"
 #include "data_base.h"
 #include "event_ass.h"
+#include "product_id.h"
+
 namespace larlite {
   class trigger;
   class potsummary;
@@ -184,6 +186,7 @@ namespace larlite {
     
     /// Universal event data pointer getter to return event_base* pointer for specified event-data type.
     event_base* get_data(const data::DataType_t type, const std::string& name);
+    ed_product* get_datawrapper(const data::DataType1_t type, const std::string& name);
 
     /// Universal run data pointer getter to return run_base* pointer for specified run-data type w/ run number
     run_base* get_rundata(const data::RunDataType_t type, const std::string& name);
@@ -196,6 +199,14 @@ namespace larlite {
 	Specialize the template to the data product of your choice, and it cast the
 	pointer + return reference for you.
     */
+
+    template <class T>
+    T* get_datawrapper(const std::string& name)
+    {
+      auto type = datawrapper_type<T>();
+      return (T*)(get_datawrapper(type,name));
+    }
+
     template <class T>
     T* get_data(const std::string& name)
     {
@@ -336,7 +347,7 @@ namespace larlite {
       if(!ass_info.first) return kEMPTY_ASS;
 
       auto id_b = ass_info.first->association_keys(ass_info.second).second;
-      b = this->get_data<U>(id_b.second);
+      b = this->get_data<U>(id_b.name());
       
       return ass_info.first->association(ass_info.second);
     }
@@ -356,7 +367,7 @@ namespace larlite {
       if(!ass_info.first) return kEMPTY_ASS;
 
       auto id_b = ass_info.first->association_keys(ass_info.second).second;
-      b = this->get_data<U>(id_b.second);
+      b = this->get_data<U>(id_b.name());
       
       return ass_info.first->association(ass_info.second);
     }
@@ -394,15 +405,20 @@ namespace larlite {
     template <class T>
     data::DataType_t data_type() const;
 
+    template <class T>
+    data::DataType1_t datawrapper_type() const;
+
     /// Utility method: given a type, returns a data product name
-    const std::string& product_name(data::DataType_t const type) const
-    { return data::kDATA_TREE_NAME[type]; }
+    const std::string& product1_name(data::DataType1_t const type) const
+    { return data::kDATA1_TREE_NAME[type]; }
 
   private:
     static storage_manager* me; ///< shared object instance pointer
     
     void create_data_ptr(data::DataType_t const type, std::string const& name);
     void delete_data_ptr(data::DataType_t const type, std::string const& name);
+    void create_datawrapper_ptr(data::DataType1_t const type, std::string const& name);
+    void delete_datawrapper_ptr(data::DataType1_t const type, std::string const& name);
     void create_rundata_ptr(data::RunDataType_t const type, std::string const& name);
     void delete_rundata_ptr(data::RunDataType_t const type, std::string const& name);
     void create_subrundata_ptr(data::SubRunDataType_t const type, std::string const& name);
@@ -448,6 +464,7 @@ namespace larlite {
     
     /// Data pointer array for reading event-wise data
     std::vector<std::map<std::string,larlite::event_base*> > _ptr_data_array;
+    std::vector<std::map<std::string,larlite::ed_product*> > _ptr_datawrapper_array;
     /// Data pointer array for reading run-wise data
     std::vector<std::map<std::string,larlite::run_base*> > _ptr_rundata_array;
     /// Data pointer array for reading subrun-wise data
@@ -467,6 +484,8 @@ namespace larlite {
     TTree*  _out_id_ch; ///< Event ID output TTree
     std::vector<std::map<std::string,TChain*> > _in_ch;  ///< Array of event-data input TChains
     std::vector<std::map<std::string,TTree*>  > _out_ch; ///< Array of event-data output TChains
+    std::vector<std::map<std::string,TChain*> > _in1_ch;  ///< Array of event-data input TChains
+    std::vector<std::map<std::string,TTree*>  > _out1_ch; ///< Array of event-data output TChains
     std::vector<std::map<std::string,TChain*> > _in_rundata_ch;  ///< Array of run-data input TChains
     std::vector<std::map<std::string,TTree*>  > _out_rundata_ch; ///< Array of run-data output TChains
     std::vector<std::map<std::string,TChain*> > _in_subrundata_ch;  ///< Array of input sub-run data TChains
@@ -531,6 +550,8 @@ namespace larlite {
   template<> data::DataType_t storage_manager::data_type<event_flashmatch>() const;
   template<> data::DataType_t storage_manager::data_type<event_opdetwaveform> () const;
   template<> data::SubRunDataType_t storage_manager::subrundata_type<potsummary>() const;
+
+  template<> data::DataType1_t storage_manager::datawrapper_type<larlite::wrapper<std::vector<hit1> > > () const;
 
   template<>
   const storage_manager::AssInfo_t

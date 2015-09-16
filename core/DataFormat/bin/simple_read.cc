@@ -61,7 +61,7 @@ int main(int argc, char** argv){
     std::cout 
       << Form("Found event %d ... %zu tracks! ", my_track_v->event_id(), my_track_v->size())
       << std::endl;
-    my_track_v->list_association();
+    // my_track_v->list_association();
   }
 
   my_storage.close();

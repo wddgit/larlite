@@ -48,9 +48,9 @@ namespace larlite{
 	throw DataFormatException("Overwriting the association not allowed!");
       
       std::cerr<<"\033[93m[WARNING]\033[00m Overwriting the association ... "
-	       << "Type: " << id_a.first << " by " << id_a.second.c_str()
+	       << "Type: " << id_a.type() << " by " << id_a.name().c_str()
 	       << " => "
-	       << "Type: " << id_b.first << " by " << id_b.second.c_str()
+	       << "Type: " << id_b.type() << " by " << id_b.name().c_str()
 	       << std::endl;
       _ass_data.at((*iter_a).second) = ass_a2b;
     }else{
@@ -132,9 +132,9 @@ namespace larlite{
     auto id = assid(id_a,id_b);
     if(id == kINVALID_ASS) {
       std::ostringstream msg;
-      msg << "Associtaion (" << id_a.first << "," << id_a.second.c_str()
+      msg << "Associtaion (" << id_a.type() << "," << id_a.name().c_str()
 	  << " => "
-	  << "(" << id_b.first << "," << id_b.second.c_str()
+	  << "(" << id_b.type() << "," << id_b.name().c_str()
 	  << " not found...";
       throw DataFormatException(msg.str());
     }
@@ -190,9 +190,9 @@ namespace larlite{
 	  unique_partner.insert((size_t)partner_id);
       }      
       std::cout << "    Association ID: " << index << "/" << _ass_data.size() << " ... ("
-		<< data::kDATA_TREE_NAME[keys.first.first].c_str() << "," << keys.first.second.c_str()
+		<< data::kDATA_TREE_NAME[keys.first.type()].c_str() << "," << keys.first.name().c_str()
 		<< ") => ("
-		<< data::kDATA_TREE_NAME[keys.second.first].c_str() << "," << keys.second.second.c_str()
+		<< data::kDATA_TREE_NAME[keys.second.type()].c_str() << "," << keys.second.name().c_str()
 		<< ") ... "
 		<< a_ctr
 		<< " objects associated with "
@@ -220,9 +220,9 @@ namespace larlite{
   {
     AssID_t id = kINVALID_ASS;
     for(auto const& first_pair : _ass_map_key) {
-      if(first_pair.first.first != type_a) continue;
+      if(first_pair.first.type() != type_a) continue;
       for(auto const& second_pair : first_pair.second) {
-	if(second_pair.first.first != type_b) continue;
+	if(second_pair.first.type() != type_b) continue;
 	id = second_pair.second;
       }
       if(id != kINVALID_ASS) break;
@@ -237,7 +237,7 @@ namespace larlite{
     auto iter = _ass_map_key.find(id_a);
     if(iter == _ass_map_key.end()) return id;
     for(auto const& second_pair : (*iter).second) {
-      if(second_pair.first.first != type_b) continue;
+      if(second_pair.first.type() != type_b) continue;
       id = second_pair.second;
       break;
     }
@@ -251,7 +251,7 @@ namespace larlite{
     auto iter = _ass_map_key.find(id_b);
     if(iter == _ass_map_key.end()) return id;
     for(auto const& second_pair : (*iter).second) {
-      if(second_pair.first.first != type_a) continue;
+      if(second_pair.first.type() != type_a) continue;
       id = second_pair.second;
       break;
     }
@@ -263,9 +263,9 @@ namespace larlite{
   {
     AssID_t id = kINVALID_ASS;
     for(auto const& first_pair : _ass_map_key) {
-      if(first_pair.first.first != type_a) continue;
+      if(first_pair.first.type() != type_a) continue;
       for(auto const& second_pair : first_pair.second) {
-	if(second_pair.first.first != type_b) continue;
+	if(second_pair.first.type() != type_b) continue;
 	if(id != kINVALID_ASS) {
 	  std::ostringstream msg;
 	  msg << "Association type: "
@@ -288,12 +288,12 @@ namespace larlite{
     auto iter = _ass_map_key.find(id_a);
     if(iter == _ass_map_key.end()) return id;
     for(auto const& second_pair : (*iter).second) {
-      if(second_pair.first.first != type_b) continue;
+      if(second_pair.first.type() != type_b) continue;
       if(id != kINVALID_ASS) {
 	std::ostringstream msg;
 	msg << "Association type: "
-	    << data::kDATA_TREE_NAME[id_a.first].c_str() << " (" << id_a.first <<")"
-	    << " by " << id_a.second.c_str()
+	    << data::kDATA_TREE_NAME[id_a.type()].c_str() << " (" << id_a.type() <<")"
+	    << " by " << id_a.name().c_str()
 	    << " => "
 	    << data::kDATA_TREE_NAME[type_b].c_str() << " (" << type_b <<")"
 	    << " is not unique!";
@@ -311,14 +311,14 @@ namespace larlite{
     auto iter = _ass_map_key.find(id_b);
     if(iter == _ass_map_key.end()) return id;
     for(auto const& second_pair : (*iter).second) {
-      if(second_pair.first.first != type_a) continue;
+      if(second_pair.first.type() != type_a) continue;
       if(id != kINVALID_ASS) {
 	std::ostringstream msg;
 	msg << "Association type: "
 	    << data::kDATA_TREE_NAME[type_a].c_str() << " (" << type_a <<")"
 	    << " => "
-	    << data::kDATA_TREE_NAME[id_b.first].c_str() << " (" << id_b.first <<")"
-	    << " by " << id_b.second.c_str()
+	    << data::kDATA_TREE_NAME[id_b.type()].c_str() << " (" << id_b.type() <<")"
+	    << " by " << id_b.name().c_str()
 	    << " is not unique!";
 	throw DataFormatException(msg.str());
       }
@@ -333,9 +333,9 @@ namespace larlite{
   {
     std::vector<larlite::AssID_t> id_v;
     for(auto const& first_pair : _ass_map_key) {
-      if(first_pair.first.first != type_a) continue;
+      if(first_pair.first.type() != type_a) continue;
       for(auto const& second_pair : first_pair.second) {
-	if(second_pair.first.first != type_b) continue;
+	if(second_pair.first.type() != type_b) continue;
 	id_v.push_back(second_pair.second);
       }
     }
@@ -350,7 +350,7 @@ namespace larlite{
     auto iter = _ass_map_key.find(id_a);
     if(iter == _ass_map_key.end()) return id_v;
     for(auto const& second_pair : (*iter).second) {
-      if(second_pair.first.first != type_b) continue;
+      if(second_pair.first.type() != type_b) continue;
       id_v.push_back(second_pair.second);
     }
     return id_v;
@@ -364,7 +364,7 @@ namespace larlite{
     auto iter = _ass_map_key.find(id_b);
     if(iter == _ass_map_key.end()) return id_v;
     for(auto const& second_pair : (*iter).second) {
-      if(second_pair.first.first != type_a) continue;
+      if(second_pair.first.type() != type_a) continue;
       id_v.push_back(second_pair.second);
     }
     return id_v;

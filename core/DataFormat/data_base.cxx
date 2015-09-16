@@ -35,7 +35,7 @@ namespace larlite {
   { data_base::clear_data(); }
 
   const std::string& output_base::name() const
-  { return _id.second; }
+  { return _id.name(); }
 
   const ::larlite::product_id output_base::id() const
   { return _id; }

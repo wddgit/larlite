@@ -91,6 +91,13 @@ namespace larlite{
       kDATA_TYPE_MAX       ///< Event-wise enum boundary
     };
 
+    enum DataType1_t {
+      // Event-data types
+      kUndefined1=0,
+      kHit1,                ///< recob::Hit1
+      kDATA_TYPE_MAX1       ///< Event-wise enum boundary
+    };
+
     enum RunDataType_t {
       // Run-data types
       kRUNDATA_Undefined,
@@ -142,6 +149,11 @@ namespace larlite{
       "fmatch",
       "trackmom",
       "opdigit"
+    };
+
+    const std::string kDATA1_TREE_NAME[kDATA_TYPE_MAX1] = {
+      "unknown",
+      "hit1",
     };
 
     const std::string kRUNDATA_TREE_NAME[kRUNDATA_TYPE_MAX] = {

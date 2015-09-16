@@ -18,6 +18,7 @@
 #include <map>
 
 #include "Base/DataFormatConstants.h"
+#include "product_id.h"
 
 namespace larlite{
 
@@ -38,39 +39,6 @@ namespace larlite{
   typedef unsigned int AssID_t;
   /// Invalid AssID_t key value
   const AssID_t kINVALID_ASS = data::kINVALID_UINT;
-
-  /**
-     \class product_id 
-     A very simple std::pair that has (a) sorting feature and (b) simple constrution
-     w/o invoking template spcialization for easy usage in python
-   */
-  class product_id : public std::pair<unsigned short,std::string>{
-  public:
-
-    /// Default ctor
-    product_id(const unsigned short type = larlite::data::kDATA_TYPE_MAX,
-	       const std::string name = "noname")
-      : std::pair<unsigned short,std::string>(type,name)
-    {}
-    
-    /// virtual dtor
-    virtual ~product_id(){}
-
-    /// copy ctor
-    product_id(const product_id& original) : product_id(original.first,original.second)
-    {}
-
-    /// For sorting
-    inline bool operator< ( const product_id& rhs ) const 
-    { 
-      if(this->first < rhs.first) return true;
-      else if(this->first > rhs.first) return false;
-      else if(this->second < rhs.second) return true;
-      else if(this->second > rhs.second) return false;
-      return false;
-    }
-
-  };
 
   /// Association data type meant to be stored within event_X data product
   typedef std::map<product_id,AssSet_t> AssMap_t;

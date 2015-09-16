@@ -5,6 +5,8 @@
 #ifndef DATAFORMAT_TYPEDEF_H
 #define DATAFORMAT_TYPEDEF_H
 
+#include <vector>
+
 // Class forward declaration here
 
 namespace larlite{

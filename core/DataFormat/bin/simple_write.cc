@@ -44,10 +44,7 @@ int main(){
   for( int i=0; i<100; i++){
     std::cout<<my_storage.get_entries_written()<<std::endl;
     int event_id = i;
-    my_event_track->set_run(run_id);
-    my_event_track->set_subrun(subrun_id);
-    my_event_track->set_event_id(event_id);
-
+    my_storage.set_id(run_id, subrun_id, event_id);
     // Let's make 2 tracks!
     for( int j=0; j<2; j++){
       larlite::track t;
@@ -66,7 +63,7 @@ int main(){
 
     larlite::AssSet_t ass;
     ass.push_back(larlite::AssUnit_t(1,0));
-    my_event_track->set_association(larlite::data::kHit,"test",ass);
+    // my_event_track->set_association(larlite::data::kHit,"test",ass);
 
     // Store event
     my_storage.next_event();
