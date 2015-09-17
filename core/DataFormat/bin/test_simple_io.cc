@@ -14,7 +14,7 @@ int main()
   larlite::storage_manager man;
   man.set_io_mode(man.kWRITE);
   man.set_out_filename(test_fname);
-  man.set_verbosity(larlite::msg::kNORMAL);
+  man.set_verbosity(larlite::msg::kDEBUG);
 
   int nevents_written[larlite::data::kDATA_TYPE_MAX]={0};
 
