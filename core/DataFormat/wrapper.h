@@ -2,7 +2,7 @@
  * \file wrapper.h
  *
  * \ingroup DataFormat
- * 
+ *
  * \brief Wraps data stored in ROOT
  *
  * @author W. David Dagenhart - Fermilab 2015
@@ -24,7 +24,12 @@ namespace larlite {
   class wrapper : public event_base {
   public:
 
-    wrapper(std::string name="noname") : event_base(larlite::data_type<T>(), name) { }
+    wrapper(std::string name="noname") : event_base(larlite::data_type<wrapper<T> >(), name) { }
+
+    virtual ~wrapper() { }
+
+    T* product();
+    T* operator->();
 
     void clear_data() {
       event_base::clear_data();
@@ -34,5 +39,15 @@ namespace larlite {
   private:
     T obj;
   };
+  
+  template <typename T>	
+  T* wrapper<T>::product() {
+    return &obj;	
+  }
+
+  template <typename T>
+  T* wrapper<T>::operator->() {
+    return product();
+  }	
 }
 #endif

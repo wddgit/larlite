@@ -1,7 +1,9 @@
 #include <TSystem.h>
 #include <TVector3.h>
 #include "DataFormat/storage_manager.h"
+#include "DataFormat/hit1.h"
 #include "DataFormat/track.h"
+#include "DataFormat/wrapper.h"
 int main(){
 
   //
@@ -39,6 +41,7 @@ int main(){
   // Let's fill event_track for 100 events.
   //auto my_event_track = my_storage.get_data<larlite::event_track>("test");
   auto my_event_track = (::larlite::event_track*)(my_storage.get_data(larlite::data::kTrack,"test"));
+  auto my_v_hit1 = (::larlite::wrapper<std::vector<larlite::hit1> >*)(my_storage.get_data(larlite::data::kHit1,"test"));
   int run_id = 1;
   int subrun_id = 1;
   for( int i=0; i<100; i++){
@@ -57,9 +60,13 @@ int main(){
 	t.add_momentum  ( 1.);
 	t.add_direction ( TVector3( (double)k,(double)k,(double)k ) );
       }
-    
+
       // Append to the event track array
       my_event_track->push_back(t);
+
+      larlite::hit1 h;
+      h.set_rms(11.0 + j);
+      my_v_hit1->product()->push_back(h);
     }
 
     larlite::AssSet_t ass;

@@ -36,6 +36,7 @@ int main()
 
 	continue;
       auto ptr = man.get_data((larlite::data::DataType_t)j,"test");
+      std::cout << "wdd j = " << j << std::endl;
       if(ptr)
 	nevents_written[j]++;
     }

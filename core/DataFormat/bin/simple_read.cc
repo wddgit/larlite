@@ -1,7 +1,9 @@
 #include <TSystem.h>
 #include <TVector3.h>
 #include "DataFormat/storage_manager.h"
+#include "DataFormat/hit1.h"
 #include "DataFormat/track.h"
+#include "DataFormat/wrapper.h"
 int main(int argc, char** argv){
 
   if(argc<2) {
@@ -49,6 +51,7 @@ int main(int argc, char** argv){
     
     auto my_track_v = my_storage.get_data<larlite::event_track>("test");
     //auto my_track_v = (::larlite::event_track*)(my_storage.get_data(::larlite::data::kTrack,"test"));
+    auto my_hit1_v = my_storage.get_data<larlite::wrapper<std::vector<larlite::hit1> > >("test");
 
     if(!my_track_v) {
 
@@ -62,6 +65,10 @@ int main(int argc, char** argv){
       << Form("Found event %d ... %zu tracks! ", my_track_v->event_id(), my_track_v->size())
       << std::endl;
 
+    std::cout << "vector hit1 size = " << my_hit1_v->product()->size() << std::endl;
+    std::cout << "hit1 rms = " << my_hit1_v->product()->at(0).RMS() << std::endl;
+    std::cout << "hit1 rms = " << my_hit1_v->product()->at(1).RMS() << std::endl;
+    
     // Commented this out because it fails to compile
     // I do not know why it is here or what it does.
     // my_track_v->list_association();

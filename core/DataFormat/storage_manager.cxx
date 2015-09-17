@@ -1049,7 +1049,7 @@ namespace larlite {
       name_ptr = _ptr_data_array[type].find(name);
     }
     if((*name_ptr).second) return;
-    
+
     switch(type){
     case data::kTrigger:
       _ptr_data_array[type][name]=new trigger(name);
