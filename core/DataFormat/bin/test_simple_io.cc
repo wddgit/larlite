@@ -14,7 +14,7 @@ int main()
   larlite::storage_manager man;
   man.set_io_mode(man.kWRITE);
   man.set_out_filename(test_fname);
-  man.set_verbosity(larlite::msg::kDEBUG);
+  man.set_verbosity(larlite::msg::kNORMAL);
 
   int nevents_written[larlite::data::kDATA_TYPE_MAX]={0};
 
@@ -36,7 +36,6 @@ int main()
 
 	continue;
       auto ptr = man.get_data((larlite::data::DataType_t)j,"test");
-      std::cout << "wdd j = " << j << std::endl;
       if(ptr)
 	nevents_written[j]++;
     }

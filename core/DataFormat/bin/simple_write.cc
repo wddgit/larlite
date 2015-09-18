@@ -65,6 +65,9 @@ int main(){
       my_event_track->push_back(t);
 
       larlite::hit1 h;
+      // The argument value is arbitrary, just writing something
+      // so that I can read it back later and check that I read
+      // what I wrote.
       h.set_rms(11.0 + j);
       my_v_hit1->product()->push_back(h);
     }
@@ -73,7 +76,7 @@ int main(){
     ass.push_back(larlite::AssUnit_t(1,0));
 
     // Commented this out because it fails to compile
-    // I do not know why it is here or what it does.
+    // I do not know why it was here or what it was supposed to do.
     // my_event_track->set_association(larlite::data::kHit,"test",ass);
 
     // Store event
@@ -84,5 +87,3 @@ int main(){
   my_storage.close();
   return 1;
 }
-
-

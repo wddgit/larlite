@@ -7,7 +7,7 @@
 int main(int argc, char** argv){
 
   if(argc<2) {
-    
+
     std::cerr << Form("Usage: %s $INPUT_FILE\n",argv[0]) << std::endl;
 
     return 1;
@@ -17,7 +17,7 @@ int main(int argc, char** argv){
   //
   // A simple routine to read a data file and perform an event loop.
   // This is a test routine for storage_manager class which interacts
-  // decoder output root file. 
+  // decoder output root file.
   //
 
   larlite::storage_manager my_storage;
@@ -25,7 +25,7 @@ int main(int argc, char** argv){
   // If you wish, change the message level to DEBUG.
   // Commented out by default.
   my_storage.set_verbosity(larlite::msg::kDEBUG);
-  
+
   // Step 0: Set I/O mode: we are reading in, so "READ"
   my_storage.set_io_mode(larlite::storage_manager::kREAD);
 
@@ -40,7 +40,7 @@ int main(int argc, char** argv){
     std::cerr << "File open failed!" << std::endl;
     return 0;
   }
-  
+
   // Step 4: Check if it's ready to perform I/O
   if(!my_storage.is_ready_io()) {
     std::cerr << "I/O preparation failed!" << std::endl;
@@ -48,7 +48,7 @@ int main(int argc, char** argv){
 
   // Let's loop over!
   while(my_storage.next_event()){
-    
+
     auto my_track_v = my_storage.get_data<larlite::event_track>("test");
     //auto my_track_v = (::larlite::event_track*)(my_storage.get_data(::larlite::data::kTrack,"test"));
     auto my_hit1_v = my_storage.get_data<larlite::wrapper<std::vector<larlite::hit1> > >("test");
@@ -61,14 +61,14 @@ int main(int argc, char** argv){
     }
 
     // Check if pointer is valid
-    std::cout 
+    std::cout
       << Form("Found event %d ... %zu tracks! ", my_track_v->event_id(), my_track_v->size())
       << std::endl;
 
     std::cout << "vector hit1 size = " << my_hit1_v->product()->size() << std::endl;
     std::cout << "hit1 rms = " << my_hit1_v->product()->at(0).RMS() << std::endl;
     std::cout << "hit1 rms = " << my_hit1_v->product()->at(1).RMS() << std::endl;
-    
+
     // Commented this out because it fails to compile
     // I do not know why it is here or what it does.
     // my_track_v->list_association();
@@ -77,5 +77,3 @@ int main(int argc, char** argv){
   my_storage.close();
   return 1;
 }
-
-

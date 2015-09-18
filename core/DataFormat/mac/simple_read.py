@@ -9,9 +9,8 @@ man.set_verbosity(fmwk.msg.kDEBUG)
 man.open()
 
 while man.next_event() :
-    print "event wdd"
     my_hit_v = man.get_data(fmwk.data.kHit1,"test")
     print my_hit_v.name()
-    print my_hit_v.at(0).RMS()
+    print my_hit_v.product().at(0).RMS()
     print my_hit_v.at(1).RMS()
 man.close()
