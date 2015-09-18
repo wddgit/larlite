@@ -104,6 +104,12 @@ namespace larlite {
   template<> data::DataType_t data_type<wrapper<std::vector<hit1> > > ()
   { return data::kHit1; }
 
+  template<> data::DataType_t data_type<wrapper<int> > ()
+  { return data::kInt; }
+
+  template<> data::DataType_t data_type<wrapper<std::map<int,double> > > ()
+  { return data::kMapIntDouble; }
+
   template<> data::SubRunDataType_t subrundata_type<potsummary>()
   { return data::kPOTSummary; }
 }

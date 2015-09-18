@@ -13,4 +13,6 @@ while man.next_event() :
     print my_hit_v.name()
     print my_hit_v.product().at(0).RMS()
     print my_hit_v.at(1).RMS()
+    my_wrapped_int = man.get_data(fmwk.data.kInt,"test")
+    print my_wrapped_int.productRef()
 man.close()

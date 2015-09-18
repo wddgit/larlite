@@ -43,15 +43,19 @@ namespace larlite {
   public:
 
     wrapper(std::string name="noname") :
-      event_base(larlite::data_type<wrapper<T> >(), name) { }
+      event_base(larlite::data_type<wrapper<T> >(), name), obj() { }
 
     virtual ~wrapper() { }
 
     T* product();
     T* operator->();
+    T& productRef();
 
     T const* product() const;
     T const* operator->() const;
+    T const& productRef() const;
+
+    void set(T const& t) { obj = t; }
 
     void clear_data() {
       event_base::clear_data();
@@ -73,6 +77,11 @@ namespace larlite {
   }
 
   template <typename T>
+  T& wrapper<T>::productRef() {
+    return obj;
+  }
+
+  template <typename T>
   T const* wrapper<T>::product() const {
     return &obj;
   }
@@ -80,6 +89,11 @@ namespace larlite {
   template <typename T>
   T const* wrapper<T>::operator->() const {
     return product();
+  }
+
+  template <typename T>
+  T const& wrapper<T>::productRef() const {
+    return obj;
   }
 }
 #endif

@@ -34,6 +34,12 @@ for x in xrange(10):
           h2.set_rms(12.0)
           wrapped.product().push_back(h2)
 
+        if y == fmwk.data.kInt :
+          wrapped.set(21)
+
+        if y == fmwk.data.kMapIntDouble :
+          wrapped.insert(std.pair('const int,double')(31,101.0))
+
     for y in xrange(fmwk.data.kSUBRUNDATA_TYPE_MAX):
 
         if y in [fmwk.data.kSUBRUNDATA_Undefined]:

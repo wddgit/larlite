@@ -4,6 +4,9 @@
 #include "DataFormat/hit1.h"
 #include "DataFormat/track.h"
 #include "DataFormat/wrapper.h"
+#include <vector>
+#include <map>
+
 int main(){
 
   //
@@ -42,6 +45,8 @@ int main(){
   //auto my_event_track = my_storage.get_data<larlite::event_track>("test");
   auto my_event_track = (::larlite::event_track*)(my_storage.get_data(larlite::data::kTrack,"test"));
   auto my_v_hit1 = (::larlite::wrapper<std::vector<larlite::hit1> >*)(my_storage.get_data(larlite::data::kHit1,"test"));
+  auto my_int = (::larlite::wrapper<int>*)(my_storage.get_data(larlite::data::kInt,"test"));
+  auto my_m_intdouble = (::larlite::wrapper<std::map<int,double> >*)(my_storage.get_data(larlite::data::kMapIntDouble,"test"));
   int run_id = 1;
   int subrun_id = 1;
   for( int i=0; i<100; i++){
@@ -71,6 +76,10 @@ int main(){
       h.set_rms(11.0 + j);
       my_v_hit1->product()->push_back(h);
     }
+
+    *(my_int->product()) = 21;
+
+    my_m_intdouble->product()->insert(std::make_pair<int,double>(31, 101.0));
 
     larlite::AssSet_t ass;
     ass.push_back(larlite::AssUnit_t(1,0));

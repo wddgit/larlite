@@ -5,6 +5,7 @@
 #include "Base/messenger.h"
 #include <exception>
 #include <vector>
+#include <map>
 
 namespace larlite {
 
@@ -113,6 +114,8 @@ namespace larlite {
   template<> data::DataType_t data_type<event_flashmatch>();
   template<> data::DataType_t data_type<event_opdetwaveform> ();
   template<> data::DataType_t data_type<wrapper<std::vector<hit1> > > ();
+  template<> data::DataType_t data_type<wrapper<int> > ();
+  template<> data::DataType_t data_type<wrapper<std::map<int,double> > > ();
   template<> data::SubRunDataType_t subrundata_type<potsummary>();
 }
 #endif
