@@ -18,6 +18,11 @@
 #include "data_base.h"
 #include "data_type.h"
 
+#include <map>
+#include <string>
+#include <vector>
+#include <utility>
+
 namespace larlite {
 
   // Function overloads for the clear function. For vectors
