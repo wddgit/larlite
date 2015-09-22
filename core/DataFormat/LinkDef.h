@@ -72,7 +72,7 @@
 
 #pragma link C++ class larlite::wrapper<int>+;
 
-#pragma link C++ class std::pair<int, double>+;
+#pragma link C++ class std::pair<const int, double>+;
 #pragma link C++ class std::map<int, double>+;
 #pragma link C++ class larlite::wrapper<std::map<int, double> >+;
 

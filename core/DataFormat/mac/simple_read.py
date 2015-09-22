@@ -20,9 +20,11 @@ while man.next_event() :
 
     # test reading a map<int, double>
     my_wrapped_mapIntDouble = man.get_data(fmwk.data.kMapIntDouble,"test")
-    print my_wrapped_mapIntDouble.at(31)
-    for key, value in my_wrapped_mapIntDouble.product() :
-      print key, value
+    # This is commented out because it fails with ROOT 5, but it
+    # should work nicely with ROOT 6
+    #print my_wrapped_mapIntDouble.at(31)
+    #for key, value in my_wrapped_mapIntDouble.product() :
+    #  print key, value
 
     # test reading an int
     my_wrapped_int = man.get_data(fmwk.data.kInt,"test")

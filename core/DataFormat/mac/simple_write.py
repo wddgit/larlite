@@ -37,8 +37,10 @@ for x in xrange(10):
         if y == fmwk.data.kInt :
           wrapped.set(21)
 
-        if y == fmwk.data.kMapIntDouble :
-          wrapped.insert(std.pair('const int,double')(31,101.0))
+        # This is commented out because it does not work in ROOT 5
+        # but it will work ROOT 6.
+        #if y == fmwk.data.kMapIntDouble :
+        #  wrapped.insert(std.pair('const int,double')(31,101.0))
 
     for y in xrange(fmwk.data.kSUBRUNDATA_TYPE_MAX):
 
