@@ -37,6 +37,10 @@
 #include "event_ass.h"
 #include "fifo.h"
 #include "opdetwaveform.h"
+#include "wrapper.h"
+#include "hit1.h"
+
+#include <map>
 
 namespace larlite {
 
@@ -1047,7 +1051,7 @@ namespace larlite {
       name_ptr = _ptr_data_array[type].find(name);
     }
     if((*name_ptr).second) return;
-    
+
     switch(type){
     case data::kTrigger:
       _ptr_data_array[type][name]=new trigger(name);
@@ -1156,6 +1160,15 @@ namespace larlite {
       break;
     case data::kOpDetWaveform:
       _ptr_data_array[type][name]=new event_opdetwaveform(name);
+      break;
+    case data::kHit1:
+      _ptr_data_array[type][name]=new wrapper<std::vector<hit1> >(name);
+      break;
+    case data::kInt:
+      _ptr_data_array[type][name]=new wrapper<int>(name);
+      break;
+    case data::kMapIntDouble:
+      _ptr_data_array[type][name]=new wrapper<std::map<int,double> >(name);
       break;
     default:
       print(msg::kERROR,__FUNCTION__,Form("Event-data identifier not supported: %d",(int)type));
