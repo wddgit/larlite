@@ -4,7 +4,15 @@
 #include "DataFormat/hit1.h"
 #include "DataFormat/track.h"
 #include "DataFormat/wrapper.h"
+#include "RecoBase/Hit.h"
+
+#include "Cintex/Cintex.h"
+
+#include <vector>
+
 int main(int argc, char** argv){
+
+  ROOT::Cintex::Cintex::Enable();
 
   if(argc<2) {
 
@@ -54,6 +62,7 @@ int main(int argc, char** argv){
     auto my_hit1_v = my_storage.get_data<larlite::wrapper<std::vector<larlite::hit1> > >("test");
     auto my_int = my_storage.get_data<larlite::wrapper<int> >("test");
     auto my_m_intdouble = my_storage.get_data<larlite::wrapper<std::map<int,double> > >("test");
+    auto my_larsofthits = my_storage.get_data<larlite::wrapper<std::vector<recob::Hit> > >("test");
 
     if(!my_track_v) {
 
@@ -74,6 +83,10 @@ int main(int argc, char** argv){
     std::cout << "int = " << *(my_int->product()) << std::endl;
 
     std::cout << "map value = " << my_m_intdouble->product()->at(31) << std::endl;
+
+    std::cout << "larsoft hits size = " <<  my_larsofthits->product()->size() << std::endl;
+    std::cout << "  " << my_larsofthits->product()->at(0).RMS()
+              << "  " << my_larsofthits->product()->at(1).RMS() << std::endl;
 
     // Commented this out because it fails to compile
     // I do not know why it is here or what it does.

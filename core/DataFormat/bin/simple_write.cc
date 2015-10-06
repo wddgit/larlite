@@ -4,17 +4,24 @@
 #include "DataFormat/hit1.h"
 #include "DataFormat/track.h"
 #include "DataFormat/wrapper.h"
+#include "RecoBase/Hit.h"
+
+#include "Cintex/Cintex.h"
+
+#include <iostream>
 #include <vector>
 #include <map>
 
 int main(){
+
+  // Needed in ROOT 5 for CINT to understand the Reflex dictionaries
+  ROOT::Cintex::Cintex::Enable();
 
   //
   // A simple routine to read a data file and perform an event loop.
   // This is a test routine for storage_manager class which interacts
   // decoder output root file. 
   //
-
   larlite::storage_manager my_storage;
 
   // If you wish, change the message level to DEBUG.
@@ -47,6 +54,7 @@ int main(){
   auto my_v_hit1 = (::larlite::wrapper<std::vector<larlite::hit1> >*)(my_storage.get_data(larlite::data::kHit1,"test"));
   auto my_int = (::larlite::wrapper<int>*)(my_storage.get_data(larlite::data::kInt,"test"));
   auto my_m_intdouble = (::larlite::wrapper<std::map<int,double> >*)(my_storage.get_data(larlite::data::kMapIntDouble,"test"));
+  auto my_larsofthits = (::larlite::wrapper<std::vector<recob::Hit> >*)(my_storage.get_data(larlite::data::kLarSoftHit,"test"));
   int run_id = 1;
   int subrun_id = 1;
   for( int i=0; i<100; i++){
@@ -75,8 +83,32 @@ int main(){
       // what I wrote.
       h.set_rms(11.0 + j);
       my_v_hit1->product()->push_back(h);
-    }
 
+      // All values same as default constructor except the RMS
+      // where I put in an arbitrary test value
+      recob::Hit larsoftHit(raw::InvalidChannelID,
+                            0,
+                            0,
+                            0.,
+                            -1.,
+                            221.0 + j,  // RMS just an arbitrary value to test
+                            0.,
+                            -1.,
+                            0.,
+                            0.,
+                            -1.,
+                            0,
+                            -1,
+                            0.,
+                            -1,
+                            geo::kUnknown,
+                            geo::kMysteryType,
+                            geo::WireID());
+
+      my_larsofthits->product()->push_back(larsoftHit);
+
+    }
+    std::cout << "wdd size = " << my_larsofthits->product()->size() << std::endl;
     my_int->set(21);
 
     my_m_intdouble->product()->insert(std::make_pair<int,double>(31, 101.0));

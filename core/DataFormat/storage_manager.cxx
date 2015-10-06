@@ -39,8 +39,9 @@
 #include "opdetwaveform.h"
 #include "wrapper.h"
 #include "hit1.h"
-
+#include "RecoBase/Hit.h"
 #include <map>
+#include <vector>
 
 namespace larlite {
 
@@ -1170,6 +1171,10 @@ namespace larlite {
     case data::kMapIntDouble:
       _ptr_data_array[type][name]=new wrapper<std::map<int,double> >(name);
       break;
+    case data::kLarSoftHit:
+      _ptr_data_array[type][name]=new wrapper<std::vector<recob::Hit> >(name);
+      break;
+
     default:
       print(msg::kERROR,__FUNCTION__,Form("Event-data identifier not supported: %d",(int)type));
       break;

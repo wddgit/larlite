@@ -7,6 +7,10 @@
 #include <vector>
 #include <map>
 
+namespace recob {
+  class Hit;
+}
+
 namespace larlite {
 
   class trigger;
@@ -116,6 +120,7 @@ namespace larlite {
   template<> data::DataType_t data_type<wrapper<std::vector<hit1> > > ();
   template<> data::DataType_t data_type<wrapper<int> > ();
   template<> data::DataType_t data_type<wrapper<std::map<int,double> > > ();
+  template<> data::DataType_t data_type<wrapper<std::vector<recob::Hit> > > ();
   template<> data::SubRunDataType_t subrundata_type<potsummary>();
 }
 #endif

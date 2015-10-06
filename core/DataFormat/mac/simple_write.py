@@ -1,6 +1,15 @@
 import sys
 from larlite import larlite as fmwk
-from ROOT import *
+
+import ROOT
+ROOT.gSystem.Load( "libCintex" )
+ROOT.Cintex.Enable()
+#import PyCintex
+
+ROOT.gSystem.Load('libRecoBase.so')
+ROOT.gSystem.Load('libRecoBase_dict.so')
+ROOT.gSystem.Load('libRecoBase_map.so')
+ROOT.gSystem.Load('libLArLite_WrappedLarSoftDictionaries.so')
 
 man=fmwk.storage_manager()
 man.set_io_mode(man.kWRITE)
@@ -27,6 +36,7 @@ for x in xrange(10):
 
         wrapped = man.get_data(y,"test")
         if y == fmwk.data.kHit1 :
+          print dir(wrapped.product())
           h = fmwk.hit1()
           h.set_rms(11.0)
           wrapped.product().push_back(h)
@@ -36,6 +46,13 @@ for x in xrange(10):
 
         if y == fmwk.data.kInt :
           wrapped.set(21)
+
+        if y == fmwk.data.kLarSoftHit :
+
+          h11 = ROOT.recob.Hit()
+          #h = recob.Hit(raw.InvalidChannelID, 0, 0, 0., -1., 221.0 + j, 0., -1., 0., 0., -1., 0, -1, 0., -1, geo.kUnknown, geo.kMysteryType, geo.WireID())
+          print dir(wrapped.product())
+          wrapped.product().push_back(h11)
 
         # This is commented out because it does not work in ROOT 5
         # but it will work ROOT 6.

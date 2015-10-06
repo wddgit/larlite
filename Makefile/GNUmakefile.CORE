@@ -36,7 +36,7 @@ else
 # root class dictionary
 $(DICT).cxx: $(HEADERS) LinkDef.h
 	@echo '<< generating dict >>'
-	@rootcint -f $(DICT).cxx -c $(CINTFLAGS) $(INCFLAGS) $(HEADERS) LinkDef.h
+	@rootcint -f $(DICT).cxx -c $(CINTFLAGS) $(INCFLAGS) -Dconstexpr= $(HEADERS) LinkDef.h
 
 # rule for making shareable library
 $(LARLITE_LIBDIR)/$(SHLIB): $(OBJECTS) $(DICT).cxx $(DICT).o
