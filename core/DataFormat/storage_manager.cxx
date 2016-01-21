@@ -38,6 +38,11 @@
 #include "fifo.h"
 #include "opdetwaveform.h"
 #include "simphotons.h"
+#include "wrapper.h"
+#include "hit1.h"
+#include "lardatalite/RecoBase/Hit.h"
+#include <map>
+#include <vector>
 
 namespace larlite {
 
@@ -1048,7 +1053,7 @@ namespace larlite {
       name_ptr = _ptr_data_array[type].find(name);
     }
     if((*name_ptr).second) return;
-    
+
     switch(type){
     case data::kTrigger:
       _ptr_data_array[type][name]=new trigger(name);
@@ -1158,9 +1163,24 @@ namespace larlite {
     case data::kOpDetWaveform:
       _ptr_data_array[type][name]=new event_opdetwaveform(name);
       break;
+
     case data::kSimPhotons:
       _ptr_data_array[type][name]=new event_simphotons(name);
       break;
+
+    case data::kHit1:
+      _ptr_data_array[type][name]=new wrapper<std::vector<hit1> >(name);
+      break;
+    case data::kInt:
+      _ptr_data_array[type][name]=new wrapper<int>(name);
+      break;
+    case data::kMapIntDouble:
+      _ptr_data_array[type][name]=new wrapper<std::map<int,double> >(name);
+      break;
+    case data::kLarSoftHit:
+      _ptr_data_array[type][name]=new wrapper<std::vector<recob::Hit> >(name);
+      break;
+
     default:
       print(msg::kERROR,__FUNCTION__,Form("Event-data identifier not supported: %d",(int)type));
       break;

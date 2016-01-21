@@ -14,14 +14,14 @@ namespace larlite{
   {
     event_base::clear_data();
     //for(auto& ass : _ass_data) ass.clear();
-    _ass_map_key.clear();
+    // _ass_map_key.clear();
     _ass_data.clear();
     _ass_ids.clear();
   }
 
   size_t event_ass::size() const
   { return _ass_data.size(); }
-
+  /*
   void event_ass::set_association(const product_id& id_a,
 				  const product_id& id_b,
 				  const AssSet_t& ass_a2b,
@@ -33,6 +33,7 @@ namespace larlite{
       iter_a = map_key_a.insert(std::make_pair(id_b,_ass_data.size())).first;
       _ass_data.push_back(ass_a2b);
       _ass_ids.push_back(std::make_pair(id_a,id_b));
+  */
       /*
       std::cout<<"Creating a new association by "<<this->name().c_str()
 	       <<" ID="
@@ -43,6 +44,7 @@ namespace larlite{
 	       <<data::kDATA_TREE_NAME[id_b.first].c_str()<<","<<id_b.second.c_str()<<")"
 	       <<" ... current size: " << _ass_data.size()<<std::endl;
       */
+  /*
     }else if(_ass_data.at((*iter_a).second).size()){
       if(!overwrite)
 	throw DataFormatException("Overwriting the association not allowed!");
@@ -54,6 +56,7 @@ namespace larlite{
 	       << std::endl;
       _ass_data.at((*iter_a).second) = ass_a2b;
     }else{
+  */
       /*
       std::cout<<"Refilling an association by "<<this->name().c_str()
 	       <<" ID="
@@ -64,6 +67,7 @@ namespace larlite{
 	       <<data::kDATA_TREE_NAME[id_b.first].c_str()<<","<<id_b.second.c_str()<<")"
 	       <<" ... current size: " << _ass_data.size()<<std::endl;
       */
+  /*
       _ass_data.at((*iter_a).second) = ass_a2b;
     }
 
@@ -74,6 +78,7 @@ namespace larlite{
       iter_b = map_key_b.insert(std::make_pair(id_a,_ass_data.size())).first;
       _ass_data.push_back(larlite::AssSet_t());
       _ass_ids.push_back(std::make_pair(id_b,id_a));
+  */
       /*
       std::cout<<"Creating a reverse association by "<<this->name().c_str()
 	       <<" ID="
@@ -84,7 +89,7 @@ namespace larlite{
 	       <<data::kDATA_TREE_NAME[id_b.first].c_str()<<","<<id_b.second.c_str()<<")"
 	       <<" ... current size: " << _ass_data.size()<<std::endl;
       */
-    }
+  //}
     /*
     else{
       std::cout<<"Refilling a reverse association by "<<this->name().c_str()
@@ -97,7 +102,7 @@ namespace larlite{
 	       <<" ... current size: " << _ass_data.size()<<std::endl;
     }
     */
-
+  /*
     auto& ass_b = _ass_data[(*iter_b).second];
     
     int max_val = -1;
@@ -115,7 +120,7 @@ namespace larlite{
     }
 
   }
-
+  */
   const AssSet_t& event_ass::association(const AssID_t id) const 
   { 
     if(id>=_ass_data.size()) {
@@ -125,7 +130,7 @@ namespace larlite{
     }
     return _ass_data[id];
   }
-
+  /*
   const AssSet_t& event_ass::association(const product_id& id_a,
 					 const product_id& id_b) const
   {
@@ -172,7 +177,9 @@ namespace larlite{
     }
     return _ass_ids[id];
   }
+  */
 
+  /*
   void event_ass::list_association() const
   {
     std::cout << "  Listing associations stored..." << std::endl;
@@ -202,7 +209,8 @@ namespace larlite{
     }
     std::cout << "  ... done!" << std::endl;
   }
-
+  */
+  /*
   AssID_t event_ass::assid(const product_id& id_a,
 			   const product_id& id_b) const 
   {
@@ -214,7 +222,7 @@ namespace larlite{
     id = (*iter_b).second;
     return id;
   }
-  
+
   AssID_t event_ass::find_one_assid(const data::DataType_t type_a,
 				    const data::DataType_t type_b) const
   {
@@ -369,7 +377,7 @@ namespace larlite{
     }
     return id_v;
   }
-
+  */
 }
 #endif
 
