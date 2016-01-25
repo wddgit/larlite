@@ -148,7 +148,7 @@ namespace larlite{
       "fmatch",
       "trackmom",
       "opdigit",
-      "simphotons"
+      "simphotons",
       "hit1",
       "int",
       "mapintdouble",
