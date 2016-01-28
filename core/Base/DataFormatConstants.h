@@ -93,6 +93,7 @@ namespace larlite{
       kInt,
       kMapIntDouble,
       kLarSoftHit,
+      kLarSoftCluster,
       kDATA_TYPE_MAX       ///< Event-wise enum boundary
     };
 
@@ -152,7 +153,8 @@ namespace larlite{
       "hit1",
       "int",
       "mapintdouble",
-      "larsofthit"
+      "larsofthit",
+      "larsoftcluster"
     };
 
     const std::string kRUNDATA_TREE_NAME[kRUNDATA_TYPE_MAX] = {

@@ -41,6 +41,7 @@
 #include "wrapper.h"
 #include "hit1.h"
 #include "lardatalite/RecoBase/Hit.h"
+#include "lardatalite/RecoBase/Cluster.h"
 #include <map>
 #include <vector>
 
@@ -1179,6 +1180,9 @@ namespace larlite {
       break;
     case data::kLarSoftHit:
       _ptr_data_array[type][name]=new wrapper<std::vector<recob::Hit> >(name);
+      break;
+    case data::kLarSoftCluster:
+      _ptr_data_array[type][name]=new wrapper<std::vector<recob::Cluster> >(name);
       break;
 
     default:

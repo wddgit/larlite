@@ -5,6 +5,7 @@
 #include "DataFormat/track.h"
 #include "DataFormat/wrapper.h"
 #include "lardatalite/RecoBase/Hit.h"
+#include "lardatalite/RecoBase/Cluster.h"
 
 #include <vector>
 
@@ -59,6 +60,7 @@ int main(int argc, char** argv){
     auto my_int = my_storage.get_data<larlite::wrapper<int> >("test");
     auto my_m_intdouble = my_storage.get_data<larlite::wrapper<std::map<int,double> > >("test");
     auto my_larsofthits = my_storage.get_data<larlite::wrapper<std::vector<recob::Hit> > >("test");
+    auto my_larsoftclusters = my_storage.get_data<larlite::wrapper<std::vector<recob::Cluster> > >("test");
 
     if(!my_track_v) {
 
@@ -80,9 +82,12 @@ int main(int argc, char** argv){
 
     std::cout << "map value = " << my_m_intdouble->product()->at(31) << std::endl;
 
-    std::cout << "larsoft hits size = " <<  my_larsofthits->product()->size() << std::endl;
-    std::cout << "  " << my_larsofthits->product()->at(0).RMS()
-              << "  " << my_larsofthits->product()->at(1).RMS() << std::endl;
+    std::cout << "larsoft hits, size = " <<  my_larsofthits->product()->size()
+              << ", 0 RMS = " << my_larsofthits->product()->at(0).RMS()
+              << ", 1 RMS = " << my_larsofthits->product()->at(1).RMS() << std::endl;
+    std::cout << "larsoft clusters size = " <<  my_larsoftclusters->product()->size()
+              << ", 0 NHits = " << my_larsoftclusters->product()->at(0).NHits()
+              << ", 1 NHits = " << my_larsoftclusters->product()->at(1).NHits() << std::endl;
 
     // Commented this out because it fails to compile
     // I do not know why it is here or what it does.

@@ -5,6 +5,7 @@
 #include "DataFormat/track.h"
 #include "DataFormat/wrapper.h"
 #include "lardatalite/RecoBase/Hit.h"
+#include "lardatalite/RecoBase/Cluster.h"
 
 #include <iostream>
 #include <vector>
@@ -50,6 +51,8 @@ int main(){
   auto my_int = (::larlite::wrapper<int>*)(my_storage.get_data(larlite::data::kInt,"test"));
   auto my_m_intdouble = (::larlite::wrapper<std::map<int,double> >*)(my_storage.get_data(larlite::data::kMapIntDouble,"test"));
   auto my_larsofthits = (::larlite::wrapper<std::vector<recob::Hit> >*)(my_storage.get_data(larlite::data::kLarSoftHit,"test"));
+  auto my_larsoftclusters = (::larlite::wrapper<std::vector<recob::Cluster> >*)(my_storage.get_data(larlite::data::kLarSoftCluster,"test"));
+
   int run_id = 1;
   int subrun_id = 1;
   for( int i=0; i<100; i++){
@@ -102,8 +105,35 @@ int main(){
 
       my_larsofthits->product()->push_back(larsoftHit);
 
+      recob::Cluster larsoftCluster(0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    i + j,
+                                    0.0,
+                                    0.0,
+                                    0,
+                                    static_cast<geo::View_t>(0),
+                                    geo::PlaneID()
+      );
+
+
+      my_larsoftclusters->product()->push_back(larsoftCluster);
     }
-    std::cout << "wdd size = " << my_larsofthits->product()->size() << std::endl;
     my_int->set(21);
 
     my_m_intdouble->product()->insert(std::make_pair<int,double>(31, 101.0));

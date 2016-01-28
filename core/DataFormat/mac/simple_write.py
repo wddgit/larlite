@@ -17,6 +17,7 @@ my_v_hit1 = man.get_data(fmwk.data.kHit1,"test")
 my_int = man.get_data(fmwk.data.kInt,"test")
 my_m_intdouble = man.get_data(fmwk.data.kMapIntDouble,"test")
 my_larsofthits = man.get_data(fmwk.data.kLarSoftHit,"test")
+my_larsoftclusters = man.get_data(fmwk.data.kLarSoftCluster,"test")
 
 for event_id in xrange(100):
     print event_id
@@ -42,10 +43,15 @@ for event_id in xrange(100):
 
         # All values same as default constructor except the RMS
         # where I put in an arbitrary test value
-        larsoftHit = ROOT.recob.Hit(ROOT.raw.InvalidChannelID, 0, 0, 0., -1., 200.0 + event_id + j, 0., -1., 0., 0., -1., 0, -1, 0., -1, ROOT.geo.kUnknown, ROOT.geo.kMysteryType, ROOT.geo.WireID());
+        larsoftHit = ROOT.recob.Hit(ROOT.raw.InvalidChannelID, 0, 0, 0., -1., 200.0 + event_id + j, 0., -1., 0., 0., -1., 0, -1, 0., -1, ROOT.geo.kUnknown, ROOT.geo.kMysteryType, ROOT.geo.WireID())
 
         my_larsofthits.product().push_back(larsoftHit)
-    print "wdd size = {}".format(my_larsofthits.product().size())
+
+        larsoftCluster = ROOT.recob.Cluster(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, event_id + j, 0.0, 0.0, 0, 0, ROOT.geo.PlaneID())
+
+
+        my_larsoftclusters.product().push_back(larsoftCluster)
+
     my_int.set(21);
 
     p = ROOT.std.pair('const int','double')(31, 101.0)
