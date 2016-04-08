@@ -1,6 +1,6 @@
 #include "DataFormat/wrapper.h"
-#include "lardatalite/RecoBase/Hit.h"
-#include "lardatalite/RecoBase/Cluster.h"
+#include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Cluster.h"
 
 namespace DataFormats_Common {
   struct dictionary {

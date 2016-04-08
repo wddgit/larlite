@@ -40,8 +40,8 @@
 #include "simphotons.h"
 #include "wrapper.h"
 #include "hit1.h"
-#include "lardatalite/RecoBase/Hit.h"
-#include "lardatalite/RecoBase/Cluster.h"
+#include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Cluster.h"
 #include <map>
 #include <vector>
 
