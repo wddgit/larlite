@@ -1,23 +1,22 @@
 import sys
-from larlite import larlite as fmwk
-
+from ROOT import larlite
 import ROOT
 
-man=fmwk.storage_manager()
+man=larlite.storage_manager()
 man.set_io_mode(man.kWRITE)
 man.set_out_filename("trialpy.root")
-man.set_verbosity(fmwk.msg.kDEBUG)
+man.set_verbosity(larlite.msg.kDEBUG)
 man.open()
 
 run_id = 1;
 subrun_id = 1;
 
-my_event_track = man.get_data(fmwk.data.kTrack,"test")
-my_v_hit1 = man.get_data(fmwk.data.kHit1,"test")
-my_int = man.get_data(fmwk.data.kInt,"test")
-my_m_intdouble = man.get_data(fmwk.data.kMapIntDouble,"test")
-my_larsofthits = man.get_data(fmwk.data.kLarSoftHit,"test")
-my_larsoftclusters = man.get_data(fmwk.data.kLarSoftCluster,"test")
+my_event_track = man.get_data(larlite.data.kTrack,"test")
+my_v_hit1 = man.get_data(larlite.data.kHit1,"test")
+my_int = man.get_data(larlite.data.kInt,"test")
+my_m_intdouble = man.get_data(larlite.data.kMapIntDouble,"test")
+my_larsofthits = man.get_data(larlite.data.kLarSoftHit,"test")
+my_larsoftclusters = man.get_data(larlite.data.kLarSoftCluster,"test")
 
 for event_id in xrange(100):
     print event_id
@@ -25,7 +24,7 @@ for event_id in xrange(100):
 
     # Let's make 2 tracks!
     for j in xrange(2):
-        track = fmwk.track()
+        track = larlite.track()
         for k in xrange(20):
             track.set_track_id(j)
             aVector = ROOT.TVector3(k,k,k)
@@ -34,7 +33,7 @@ for event_id in xrange(100):
             track.add_direction(aVector)
         my_event_track.push_back(track)
 
-        h = fmwk.hit1()
+        h = larlite.hit1()
         # The argument value is arbitrary, just writing something
         # so that I can read it back later and check that I read
         # what I wrote.
